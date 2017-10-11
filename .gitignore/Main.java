@@ -3,8 +3,10 @@
  * 
  */
 
-import java.util.Iterator;
 import java.util.Scanner;
+
+import dataStructures.*;
+
 import java.io.FileInputStream;
 //import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,6 +31,7 @@ public class Main {
 	private static final String GET_HOME = "GH";
 	private static final String ADD_STAY = "AT";
 	private static final String LIST_USER_HOME = "LH";
+	private static final String TRAVELER_STAYS = "LT";
 	private static final String SEARCH_PROPERTIES = "PH";
 	private static final String SEARCH_BEST_PROPERTY = "LB";
 	private static final String EXIT = "XS";
@@ -64,8 +67,8 @@ public class Main {
 	 */
 	public static void main(String[] args) {
 		Scanner in = new Scanner(System.in);
-		// HomeAwayClass hA2 = load();
-		HomeAwayClass hA = new HomeAwayClass();
+		HomeAwayClass hA = load();
+		// HomeAwayClass hA2 = new HomeAwayClass();
 		String com = comands(in);
 
 		while (!com.equals(EXIT)) {
@@ -100,8 +103,11 @@ public class Main {
 			case SEARCH_PROPERTIES:
 				searchProperties(in, hA);
 			case SEARCH_BEST_PROPERTY:
-				searchBestProperty(in,hA);
+				searchBestProperty(in, hA);
+			case TRAVELER_STAYS:
+				travelerStays(in, hA);
 			case EXIT:
+				save(hA);
 				break;
 			default:
 				System.out.println("ERRO!");
@@ -110,7 +116,6 @@ public class Main {
 			System.out.println();
 			com = comands(in);
 		}
-		// save(hA);
 		System.out.println(LEAVE_SAVE);
 		System.out.println();
 		in.close();
@@ -345,65 +350,94 @@ public class Main {
 			System.out.println(USER_NO_EXISTS);
 	}
 
+	private static void travelerStays(Scanner in, HomeAwayClass hA) {
+
+	}
+
 	private static void searchProperties(Scanner in, HomeAwayClass hA) {
 
-		Iterator<Home> it = hA.homeIterator();
-		int counter = 0;
+		// Iterator<Home> it = hA.homeIterator();
 		int pessoas = in.nextInt();
 		String local = in.nextLine();
 
 		if (pessoas > 0) {
-			while (it.hasNext()) {
-				Home temp = it.next();
-				if (temp.getLocal().equals(local)) {
-					System.out.println("\n" + temp.getHomeInfo());
-					counter++;
-				}
-			}
-			if (counter == 0) {
+			if (!hA.getHomeByLocal(local).equals(local)) {
+				System.out.println(hA.getHomeByLocal(local).getHomeInfo());
+			} else {
 				System.out.println(NO_RESULTS);
-
 			}
-		} else
+
+		} else {
 			System.out.println(WRONG_DATA);
+		}
+
+		// if (pessoas > 0) {
+		// while (it.hasNext()) {
+		// Home temp = it.next();
+		// if (temp.getLocal().equals(local)) {
+		// System.out.println("\n" + temp.getHomeInfo());
+		// counter++;
+		// }
+		// }
+		// if (counter == 0) {
+		// System.out.println(NO_RESULTS);
+		//
+		// }
+		// } else
+		// System.out.println(WRONG_DATA);
 
 	}
-	
-	private static void searchBestProperty(Scanner in, HomeAwayClass hA){
-		
-		Iterator<Home> it = hA.homeIterator();
-		int counter = 0;
+
+	private static void searchBestProperty(Scanner in, HomeAwayClass hA) {
+
+		// Iterator<Home> it = hA.homeIterator();
+		// int counter = 0;
 		String local = in.nextLine();
-		
-			while(it.hasNext()) {
-				Home temp= it.next();
-				if(temp.getLocal().equals(local))
-					System.out.println("\n" + temp.getHomeInfo());
-					counter++;
-				}
-				if(counter == 0){
-					System.out.println(NO_RESULTS);
-			}
-		
-		
+
+		// while (it.hasNext()) {
+		// Home temp = it.next();
+		// if (temp.getLocal().equals(local))
+		// System.out.println("\n" + temp.getHomeInfo());
+		// counter++;
+		// }
+		// if (counter == 0) {
+		// System.out.println(NO_RESULTS);
+		// }
+		if (!hA.getHomeByLocal(local).equals(local)) {
+			System.out.println(hA.getHomeByLocal(local).getHomeInfo());
+		} else
+			System.out.println(NO_RESULTS);
+
 	}
-	
 
 	// ---------SAVE AND LOAD---------//
-	/*
-	 * private static final void save(HomeAwayClass hA) { try {
-	 * ObjectOutputStream file = new ObjectOutputStream(new
-	 * FileOutputStream(DATA_FILE)); file.writeObject(hA); file.flush();
-	 * file.close(); } catch (IOException e) { System.out.println("Erro!"); } }
-	 * 
-	 * private static final HomeAwayClass load() { try { ObjectInputStream file
-	 * = new ObjectInputStream(new FileInputStream(DATA_FILE)); //
-	 * InvertibleQueue<Integer> queue = (InvertibleQueue<Integer>) //
-	 * file.readObject(); HomeAwayClass hA2 = (HomeAwayClass) file.readObject();
-	 * file.close(); System.out.println("load: LI FICHEIRO"); return hA2; }
-	 * catch (IOException e) { return new HomeAwayClass(); } catch
-	 * (ClassNotFoundException e) { return new HomeAwayClass(); }
-	 * 
-	 * }
-	 */
+
+	private static final void save(HomeAwayClass hA) {
+		try {
+			ObjectOutputStream file = new ObjectOutputStream(new FileOutputStream(DATA_FILE));
+			file.writeObject(hA);
+			file.flush();
+			file.close();
+		} catch (IOException e) {
+			System.out.println("Erro!");
+		}
+	}
+
+	@SuppressWarnings("unchecked")
+	private static final HomeAwayClass load() {
+		try {
+			ObjectInputStream file = new ObjectInputStream(new FileInputStream(DATA_FILE)); //
+			//DoublyLinkedList<Integer> hA = (DoublyLinkedList<Integer>) file.readObject();
+			HomeAwayClass hA = (HomeAwayClass) file.readObject();
+			file.close();
+			System.out.println("load: LI FICHEIRO");
+			return hA;
+		} catch (IOException e) {
+			return new HomeAwayClass();
+		} catch (ClassNotFoundException e) {
+			return new HomeAwayClass();
+		}
+
+	}
+
 }
